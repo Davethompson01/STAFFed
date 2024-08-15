@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import "./index.css" 
-import SignPage from "./Pages/Signupage";
+import SignPage from "./Pages/SignPage";
 
 function App() {
   return (
