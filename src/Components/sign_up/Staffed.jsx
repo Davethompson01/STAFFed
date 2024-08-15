@@ -89,27 +89,6 @@ const Staffed = () => {
             </defs>
           </svg>
         </div>
-        <div className="grid place-items-center px-3">
-          <div className="flex justify-between">
-            <h1 className="text-center">Already have a STAFFed account?</h1>
-            <span className="flex items-center">
-              <button className="text-blue-600 underline">Sign in</button>
-              <svg
-                width="7"
-                height="14"
-                viewBox="0 0 7 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1 13L6 6.33333L1 1"
-                  stroke="#1A609B"
-                  strokeWidth="1.5"
-                />
-              </svg>
-            </span>
-          </div>
-        </div>
       </div>
     </>
   );
