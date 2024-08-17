@@ -1,6 +1,10 @@
 import React from 'react'
 
 const Freetrial = () => {
+
+  const validate =()=>[
+    
+  ]
   return (
     <>
     <div className='my-8 text-center'>

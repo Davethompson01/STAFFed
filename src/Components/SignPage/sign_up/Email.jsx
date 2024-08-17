@@ -3,12 +3,12 @@ import React, { useState } from "react";
 const Email = () => {
   const [email, setEmail] = useState("");
   const emailShow = () => {
-    setemailClick(true);
+    setEmail(true);
   };
 
   const emailBlur = () => {
     if (email === "") {
-      setemailClick(false);
+      setEmail(false);
     }
   };
 
