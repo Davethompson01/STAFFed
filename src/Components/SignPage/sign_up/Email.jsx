@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Email = () => {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate(); // Use the useNavigate hook here
+
   const emailShow = () => {
     setEmail(true);
   };
@@ -16,9 +19,19 @@ const Email = () => {
     setEmail(e.target.value);
   };
 
+  const handleNavigate = (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    navigate("../ValidatePassword/LoginPage"); // Navigate to the login page
+  };
+
   return (
     <div className="px-5 py-3">
-      <form action="" method="post" className="grid gap-6">
+      <form
+        action=""
+        method="post"
+        className="grid gap-6"
+        onSubmit={handleNavigate}
+      >
         <input
           type="text"
           name="email"
@@ -31,14 +44,14 @@ const Email = () => {
         />
         <input
           type="submit"
-          value="Sign in with Email "
+          value="Sign in with Email"
           className="border border-blue-500 w-full p-3 rounded-xl font-semibold"
         />
       </form>
 
       <div className="flex items-center justify-center gap-2 mt-5">
         <div className="w-[50px] bg-gray-300 h-[2px]"></div>
-        <p>or Sign in with </p>
+        <p>or Sign in with</p>
         <div className="w-[50px] bg-gray-300 h-[2px]"></div>
       </div>
     </div>
