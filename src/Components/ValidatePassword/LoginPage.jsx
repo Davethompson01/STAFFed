@@ -1,18 +1,36 @@
 import React from "react";
 import Staffed from "../SignPage/sign_up/Staffed";
 import { useNavigate } from "react-router-dom";
-// import OtpPage from "../ForgotPassword/Otp";
 
 const LoginPage = () => {
-  const Navigate = useNavigate();
-  const Otppage = (d) => {
-    d.preventDefault();
-    Navigate("../ForgotPassword/Otp");
+  const navigate = useNavigate();
+
+  const handleOtpPage = (event) => {
+    event.preventDefault();
+    navigate("../ForgotPassword/Otp");
+  };
+
+  const linearStyle = {
+    background: "linear-gradient(to left, #2D65BD, #035A74)",
+    color: "white",
+    textAlign: "center",
+    borderRadius: "8px",
+    cursor: "pointer",
+  };
+
+  const employee = (event) => {
+    // const navigate = useNavigate();
+    event.preventDefault();
+    navigate("../Pages/Employee");
   };
   return (
     <>
-      <div>
+      <div className="relative">
         <Staffed />
+        <div className="absolute top-[30px] flex items-center bg-red-400 w-full">
+          <p>Cancel</p>
+          <p className="text-center flex-grow">Sign in with email</p>
+        </div>
       </div>
       <div>
         <form action="" method="post" className="grid gap-3 py-3 px-5">
@@ -26,12 +44,24 @@ const LoginPage = () => {
           <input
             type="password"
             placeholder="Password"
-            value=""
             className="border border-gray-400 w-full p-3 rounded-xl font-semibold"
           />
         </form>
-        <p className=" px-5 text-gray-400 cursor-pointer " onClick={Otppage}>
+        <p
+          className="px-5 text-gray-400 cursor-pointer"
+          onClick={handleOtpPage}
+        >
           Forgot password?
+        </p>
+      </div>
+      <div className="py-3 px-5 mt-3">
+        <div style={linearStyle} className="p-3" onClick={employee}>
+          Sign In
+        </div>
+      </div>
+      <div className="py-3 px-5">
+        <p className="text-center border-[2px] border-blue-500 p-3 rounded-lg">
+          Get magic code to sign in
         </p>
       </div>
     </>
