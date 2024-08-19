@@ -21,7 +21,7 @@ const Email = () => {
 
   const handleNavigate = (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
-    navigate("../ValidatePassword/LoginPage"); // Navigate to the login page
+    navigate("/Validate-password"); // Navigate to the login page
   };
 
   return (
@@ -45,7 +45,7 @@ const Email = () => {
         <input
           type="submit"
           value="Sign in with Email"
-          className="border border-blue-500 w-full p-3 rounded-xl font-semibold"
+          className="border-[2px] border-blue-700 w-full p-3 rounded-xl font-semibold"
         />
       </form>
 

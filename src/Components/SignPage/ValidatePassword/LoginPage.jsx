@@ -1,5 +1,5 @@
 import React from "react";
-import Staffed from "../SignPage/sign_up/Staffed";
+import Staffed from "../sign_up/Staffed";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -7,7 +7,7 @@ const LoginPage = () => {
 
   const handleOtpPage = (event) => {
     event.preventDefault();
-    navigate("../ForgotPassword/Otp");
+    navigate("/MAGIC-CODE");
   };
 
   const linearStyle = {
@@ -48,7 +48,7 @@ const LoginPage = () => {
           />
         </form>
         <p
-          className="px-5 text-gray-400 cursor-pointer"
+          className="px-5 text-gray-700 cursor-pointer"
           onClick={handleOtpPage}
         >
           Forgot password?
@@ -60,7 +60,7 @@ const LoginPage = () => {
         </div>
       </div>
       <div className="py-3 px-5">
-        <p className="text-center border-[2px] border-blue-500 p-3 rounded-lg">
+        <p className="text-center border-[2px]  p-3 rounded-lg" onClick={handleOtpPage}>
           Get magic code to sign in
         </p>
       </div>

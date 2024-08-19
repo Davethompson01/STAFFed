@@ -7,7 +7,7 @@ const Linkedin = () => {
         <input
           type="submit"
           value="Sign in with Linkedin "
-          className="border border-blue-500 w-full p-3 rounded-xl font-semibold"
+          className="border-[2px] border-black w-full p-3 rounded-xl font-semibold"
         />
         
       </div>

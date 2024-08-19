@@ -1,12 +1,12 @@
-import React from 'react'
-import LoginPage from '../Components/ValidatePassword/LoginPage'
+import React from "react";
+import LoginPage from "../Components/SignPage/ValidatePassword/LoginPage";
 
 const Validate = () => {
   return (
     <>
-    <LoginPage />
+      <LoginPage />
     </>
-  )
-}
+  );
+};
 
-export default Validate
+export default Validate;
