@@ -2,9 +2,9 @@
 class Database {
 
     private $DB_HOST = "localhost";
-    private $DB_NAME = "challange";
-    private $DB_USER = "challange";
-    private $DB_PASS = 'Ayobami123.';
+    private $DB_NAME = "staffed";
+    private $DB_USER = "staffed";
+    private $DB_PASS = 'staffed';
 
     private $connection;
 
