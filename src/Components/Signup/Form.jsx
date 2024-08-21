@@ -14,10 +14,10 @@ const LandingPage = () => {
     switch (role) {
       case "Employer":
         navigate('/employer');
-        break
+        break;
       case "Employee":
-       navigate('/employee')
-       break;
+      navigate('/employee')
+      break;
       default:
         navigate('/');
         break;
@@ -206,7 +206,7 @@ const LandingPage = () => {
 
        <div>
         <button onClick={()=>handlelogin('employer')}>Hire a Staff</button>
-        <button onClick={()=>handlelogin('employee')}>Find a Job</button>
+        <button onClick={()=>handlelogin('employee')}>Find</button>
        </div>
       </div>
     </div>
