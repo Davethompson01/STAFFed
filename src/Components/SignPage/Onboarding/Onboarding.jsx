@@ -1,19 +1,20 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Context/userProvider";
 
 const Onboarding = () => {
-  const { setUserType } = useUser(); // Destructure setUserType from useUser
+  const { setUserType } = useUser();
   const navigate = useNavigate();
 
   const handleLogin = (role) => {
-    setUserType(role); // Set the user type based on the selected role
+    setUserType(role);
     switch (role) {
       case "Employer":
         navigate("/employer");
         break;
       case "Employee":
-        navigate("/employee");
+        navigate("/Signin");
         break;
       default:
         navigate("/");
@@ -27,6 +28,7 @@ const Onboarding = () => {
 
   return (
     <>
+      <Outlet />
       <div style={linearStyle} className="h-[100vh] relative">
         <h1 className="flex place-items-end pb-3 text-white gap-2 h-[70px] pl-3 left-[10px]">
           <svg

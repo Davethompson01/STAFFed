@@ -5,9 +5,10 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userType, setUserType] = useState(null);
+  const [isSignedUp, setIsSignedUp] = useState(false); // Track signup status
 
   return (
-    <UserContext.Provider value={{ userType, setUserType }}>
+    <UserContext.Provider value={{ userType, setUserType, isSignedUp, setIsSignedUp }}>
       {children}
     </UserContext.Provider>
   );

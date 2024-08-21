@@ -41,15 +41,15 @@ import { UserProvider } from "./Components/Context/userProvider"; // Ensure this
 function App() {
   return (
     <UserProvider>
+      {" "}
       <Routes>
-        <Route path="/Pages/Employee" element={<Employee />} />
-        <Route element={<OnboardingPage />}>
-          <Route path="/SignUp" element={<SignUp />} />
-          <Route path="/Sign-in" element={<SignPage />} />
-          <Route path="/Validate-password" element={<Validate />} />
-          <Route path="/MAGIC-CODE" element={<OtpPage />} />
-        </Route>
-        <Route element={<OnboardingPage />} />
+        <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/Signin" element={<SignPage />} />
+        <Route path="/Validate-password" element={<Validate />} />
+        <Route path="/MAGIC-CODE" element={<OtpPage />} />
+
+        <Route path="/" element={<Employee />} />
       </Routes>
     </UserProvider>
   );

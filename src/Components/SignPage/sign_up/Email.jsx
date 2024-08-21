@@ -20,7 +20,7 @@ const Email = () => {
   };
 
   const handleNavigate = (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
     navigate("/Validate-password"); // Navigate to the login page
   };
 

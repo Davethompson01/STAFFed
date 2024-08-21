@@ -3,26 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../Context/userProvider";
 
 const LandingPage = () => {
+ 
   const setUserType = useUser();
   const navigate = useNavigate();
   const signup = (e) => {
     e.preventDefault();
-    navigate("/Sign-in");
+    navigate("/onboarding");
   };
-  const handlelogin =()=>{
-    setUserType(role)
+  const handlelogin = () => {
+    setUserType(role);
     switch (role) {
       case "Employer":
-        navigate('/employer');
+        navigate("/employer");
         break;
       case "Employee":
-      navigate('/employee')
-      break;
+        navigate("/employee");
+        break;
       default:
-        navigate('/');
+        navigate("/");
         break;
     }
-  }
+  };
 
   return (
     <div className="relative h-[150vh] pt-10">
@@ -204,10 +205,10 @@ const LandingPage = () => {
           </defs>
         </svg>
 
-       <div>
-        <button onClick={()=>handlelogin('employer')}>Hire a Staff</button>
-        <button onClick={()=>handlelogin('employee')}>Find</button>
-       </div>
+        <div>
+          <button onClick={() => handlelogin("employer")}>Hire a Staff</button>
+          <button onClick={() => handlelogin("employee")}>Find</button>
+        </div>
       </div>
     </div>
   );

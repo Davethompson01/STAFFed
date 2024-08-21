@@ -1,11 +1,14 @@
 import React from "react";
 import Staffed from "../sign_up/Staffed";
+import { useUser } from "../../Context/userProvider";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { setIsSignedUp } = useUser();
 
   const handleOtpPage = (event) => {
+
     event.preventDefault();
     navigate("/MAGIC-CODE");
   };
@@ -18,10 +21,11 @@ const LoginPage = () => {
     cursor: "pointer",
   };
 
-  const employee = (event) => {
+  const usertype = (event) => {
     // const navigate = useNavigate();
+    setIsSignedUp(true);
     event.preventDefault();
-    navigate("../Pages/Employee");
+    navigate("/");
   };
   return (
     <>
@@ -55,12 +59,15 @@ const LoginPage = () => {
         </p>
       </div>
       <div className="py-3 px-5 mt-3">
-        <div style={linearStyle} className="p-3" onClick={employee}>
+        <div style={linearStyle} className="p-3" onClick={usertype}>
           Sign In
         </div>
       </div>
       <div className="py-3 px-5">
-        <p className="text-center border-[2px]  p-3 rounded-lg" onClick={handleOtpPage}>
+        <p
+          className="text-center border-[2px]  p-3 rounded-lg"
+          onClick={handleOtpPage}
+        >
           Get magic code to sign in
         </p>
       </div>

@@ -6,17 +6,17 @@ import Linkedin from "../Components/SignPage/Otherauthentication/Linkedin";
 import SSO from "../Components/SignPage/Otherauthentication/SSO";
 import Freetrial from "../Components/SignPage/Otherauthentication/Freetrial";
 
-const Signpage = () => {
+const SignPage = () => {
   return (
     <div>
       <Staffed />
       <Email />
       <Google />
-      <Linkedin/>
+      <Linkedin />
       <SSO />
-      <Freetrial  />
+      <Freetrial />
     </div>
   );
 };
 
-export default Signpage;
+export default SignPage;
