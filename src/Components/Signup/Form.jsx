@@ -1,13 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import vector from "./ector5"
+import { useUser } from "../Context/userProvider";
 
 const LandingPage = () => {
+  const setUserType = useUser();
   const navigate = useNavigate();
   const signup = (e) => {
     e.preventDefault();
     navigate("/Sign-in");
   };
+  const handlelogin =()=>{
+    setUserType(role)
+    switch (role) {
+      case "Employer":
+        navigate('/employer');
+        break
+      case "Employee":
+       navigate('/employee')
+       break;
+      default:
+        navigate('/');
+        break;
+    }
+  }
 
   return (
     <div className="relative h-[150vh] pt-10">
@@ -189,7 +204,10 @@ const LandingPage = () => {
           </defs>
         </svg>
 
-        {/* <img src="/vector5.png" className="h-[100%]  w-full bg-cover" alt="" /> */}
+       <div>
+        <button onClick={()=>handlelogin('employer')}>Hire a Staff</button>
+        <button onClick={()=>handlelogin('employee')}>Find a Job</button>
+       </div>
       </div>
     </div>
   );
