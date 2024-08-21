@@ -22,10 +22,9 @@ const LoginPage = () => {
   };
 
   const usertype = (event) => {
-    // const navigate = useNavigate();
-    setIsSignedUp(true);
-    event.preventDefault();
-    navigate("/");
+    setIsSignedUp(true)
+    event.preventDefault()
+    navigate("/employee")
   };
   return (
     <>

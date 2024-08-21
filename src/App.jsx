@@ -43,13 +43,14 @@ function App() {
     <UserProvider>
       {" "}
       <Routes>
-        <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/" element={<SignUp />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/Signin" element={<SignPage />} />
         <Route path="/Validate-password" element={<Validate />} />
         <Route path="/MAGIC-CODE" element={<OtpPage />} />
 
-        <Route path="/" element={<Employee />} />
+
+        <Route path="/employee" element={<Employee />} />
       </Routes>
     </UserProvider>
   );

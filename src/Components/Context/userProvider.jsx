@@ -1,5 +1,5 @@
 // Components/Context/userProvider.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 const UserContext = createContext();
 
@@ -8,7 +8,9 @@ export const UserProvider = ({ children }) => {
   const [isSignedUp, setIsSignedUp] = useState(false); // Track signup status
 
   return (
-    <UserContext.Provider value={{ userType, setUserType, isSignedUp, setIsSignedUp }}>
+    <UserContext.Provider
+      value={{ userType, setUserType, isSignedUp, setIsSignedUp }}
+    >
       {children}
     </UserContext.Provider>
   );
