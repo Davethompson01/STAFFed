@@ -97,26 +97,31 @@ const LandingPage = () => {
               type="text"
               className="border border-gray-700 w-full px-3 py-3 rounded-xl"
               placeholder="Your first and last name"
+              name="username"
             />
             <h1></h1>
           </div>
           <input
             type="text"
+            name="email"
             placeholder="Email address"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
           <input
             type="text"
+            name="user_number"
             placeholder="Phone number"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
           <input
             type="text"
+            name="country"
             placeholder="Country of residence"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
           <input
             type="text"
+            name="password"
             placeholder="Create password"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />

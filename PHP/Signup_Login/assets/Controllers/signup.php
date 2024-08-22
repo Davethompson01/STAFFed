@@ -5,6 +5,9 @@ include_once(__DIR__ . '/../../Config/Database.php');
 class SignupModel {
 
     private $username;
+    private $email;
+    private $number;
+    private $country;
     private $password;
     private $connection;
 
@@ -13,26 +16,35 @@ class SignupModel {
         $this->connection = $database->getConnection();
     }
 
-    public function setData($username, $password) {
+    public function setData($username, $email,$number,$country,$password) {
         $this->username = htmlspecialchars(trim($username), ENT_QUOTES, 'UTF-8');
-        $this->password = trim($password);
+        $this->password = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
+        $this->password = trim($number);
+        $this->password = trim($country);
+        $this->password = password_hash($password,PASSWORD_BCRYPT);
     }
 
     public function checkUsername() {
-        $query = "SELECT user_name FROM users WHERE user_name = :username;";
+        // Concatenate first_name and last_name to check against the username
+        $query = "SELECT user_firstname FROM staffed_users WHERE CONCAT(first_name, ' ', last_name) = :username;";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $this->username);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC) !== false; // Return true if username exists, false otherwise
+        return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
     }
+    
 
     public function setUser() {
-        $query = "INSERT INTO users (user_name, user_password) VALUES (:username, :password);";
+        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
+
+        
+        $query = "INSERT INTO staffed_users (username,	user_email,	user_password	,user_country	,user_phoneNumber) VALUES (?,?,?,?,?,?);";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $this->username);
-        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':country', $this->number);
+        $stmt->bindParam(':number', $this->country);
         $stmt->bindParam(':password', $hashedPassword);
-        
         if ($stmt->execute()) {
             return $this->connection->lastInsertId();
         }
@@ -52,6 +64,9 @@ class SignupAuth {
 
     public function handleSignup(array $postData): void {
         $username = $postData['username'] ?? '';
+        $password = $postData['password'] ?? '';
+        $password = $postData['password'] ?? '';
+        $password = $postData['password'] ?? '';
         $password = $postData['password'] ?? '';
         
         $this->signupModel->setData($username, $password);
