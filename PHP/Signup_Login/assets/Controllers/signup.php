@@ -1,8 +1,14 @@
+
+
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include_once(__DIR__ . '/../../Config/Database.php');
 
 // Define the SignupModel that instantiate the Database class
-class SignupModel {
+class SignupController  {
 
     private $username;
     private $email;
@@ -35,16 +41,15 @@ class SignupModel {
     
 
     public function setUser() {
-        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
-
-
-        $query = "INSERT INTO staffed_users (username,	user_email,	user_password	,user_country	,user_phoneNumber) VALUES (?,?,?,?,?,?);";
+        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber) VALUES (:username, :email, :password, :country, :number);";
         $stmt = $this->connection->prepare($query);
+        
         $stmt->bindParam(':username', $this->username);
         $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':country', $this->number);
-        $stmt->bindParam(':number', $this->country);
-        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':country', $this->country);
+        $stmt->bindParam(':number', $this->number);
+    
         if ($stmt->execute()) {
             return $this->connection->lastInsertId();
         }
@@ -52,14 +57,14 @@ class SignupModel {
     }
 }
 
-include_once(__DIR__ . '/../Controllers/SignupController.php');
+include_once(__DIR__ . '/../Controllers/Signup.php');
 
 class SignupAuth {
 
     private $signupModel;
 
     public function __construct() {
-        $this->signupModel = new SignupModel();
+        $this->signupModel = new SignupModel(); // This should match the class definition
     }
 
     public function handleSignup(array $postData): void {
@@ -167,7 +172,7 @@ class UserSignup {
         }
 
 
-        return ['username' => $username, 'password' => $password];
+        return ['username' => $username,'email'=> $email,'number'=>$number,'country'=>$country,'password' => $password];
     }
 
     private function sendResponse(array $response) {

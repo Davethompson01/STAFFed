@@ -1,5 +1,5 @@
 <?php
-include_once('../src/Controllers/SignupController.php');
+include_once(__DIR__ . '/../../Signup_Login/assets/Controllers/signup.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
@@ -15,8 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $signin = new SignupAuth();
     $signin->handleSignup($_POST);
-
-    echo json_encode($result);
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
 }

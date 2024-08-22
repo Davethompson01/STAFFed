@@ -1,46 +1,46 @@
 <?php
-include_once(__DIR__ . '/../../Config/Database.php');
-
-// Define the SignupModel that instantiate the Database class
-class SignupModel{
+class SignupModel {
 
     private $username;
+    private $email;
+    private $number;
+    private $country;
     private $password;
     private $connection;
 
-    public function __construct(    ) {
+    public function __construct() {
         $database = new Database();
-        $this->connection = $database->getConnection();    
+        $this->connection = $database->getConnection();
     }
 
-    public function setData($username,$password) {
-        $this->username = $username['username'];
-        $this->password = $password['password'];
-        
+    public function setData($username, $email, $number, $country, $password) {
+        $this->username = htmlspecialchars(trim($username), ENT_QUOTES, 'UTF-8');
+        $this->email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
+        $this->number = trim($number);
+        $this->country = trim($country);
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
     }
 
     public function checkUsername() {
-        $query = "SELECT user_name FROM users WHERE user_name = :username;";
+        $query = "SELECT username FROM staffed_users WHERE username = :username;";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $this->username);
         $stmt->execute();
-        
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result !== false; // Return true if username exists, false otherwise
+        return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
     }
 
     public function setUser() {
-        $query = "INSERT INTO users (user_name, user_password) VALUES (:username, :password);";
+        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber) VALUES (:username, :email, :password, :country, :number);";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $this->username);
-        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
-        $stmt->bindParam(':password', $hashedPassword);
-        
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':country', $this->country);
+        $stmt->bindParam(':number', $this->number);
+        $stmt->bindParam(':password', $this->password);
+
         if ($stmt->execute()) {
             return $this->connection->lastInsertId();
-        } else {
-            return false; 
         }
+        return false;
     }
-    
 }

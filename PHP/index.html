@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="./index.php" method="post">
+      <h1 className="text-right">
+        Already have a STAFFed account{" "}
+        <span className="text-blue-600 cursor-pointer " onClick="{signup}">
+          sign in{" "}
+        </span>
+      </h1>
+
+      <div className="grid gap-3">
+        <input
+          type="text"
+          className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+          placeholder="Your first and last name"
+          name="username"
+        />
+        <h1></h1>
+      </div>
+      <input
+        type="text"
+        name="email"
+        placeholder="Email address"
+        className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+      />
+      <input
+        type="text"
+        name="user_number"
+        placeholder="Phone number"
+        className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+      />
+      <input
+        type="text"
+        name="country"
+        placeholder="Country of residence"
+        className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+      />
+      <input
+        type="text"
+        name="password"
+        placeholder="Create password"
+        className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+      />
+      <input type="submit" value="submit" name="submit" />
+    </form>
+  </body>
+</html>

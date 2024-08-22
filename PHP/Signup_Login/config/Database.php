@@ -9,7 +9,7 @@ class Database {
     private $connection;
 
     function __construct() {
-
+        // Constructor is empty. Consider adding initialization code if needed.
     }
 
     public function getConnection() {
@@ -18,10 +18,9 @@ class Database {
         try {
             $this->connection = new PDO("mysql:host=" . $this->DB_HOST . ";dbname=" . $this->DB_NAME, $this->DB_USER, $this->DB_PASS);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "connection succesful";
         } catch(PDOException $exception) {
             echo "Connection error: " . $exception->getMessage();
         }
-        return $this->connection;
+        return $this->connection; // Fix: Return the connection object
     }
 }
