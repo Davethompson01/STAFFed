@@ -18,9 +18,9 @@ class SignupModel {
 
     public function setData($username, $email,$number,$country,$password) {
         $this->username = htmlspecialchars(trim($username), ENT_QUOTES, 'UTF-8');
-        $this->password = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
-        $this->password = trim($number);
-        $this->password = trim($country);
+        $this->email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
+        $this->number = trim($number);
+        $this->country = trim($country);
         $this->password = password_hash($password,PASSWORD_BCRYPT);
     }
 
@@ -37,7 +37,7 @@ class SignupModel {
     public function setUser() {
         $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
 
-        
+
         $query = "INSERT INTO staffed_users (username,	user_email,	user_password	,user_country	,user_phoneNumber) VALUES (?,?,?,?,?,?);";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $this->username);
@@ -64,12 +64,14 @@ class SignupAuth {
 
     public function handleSignup(array $postData): void {
         $username = $postData['username'] ?? '';
-        $password = $postData['password'] ?? '';
-        $password = $postData['password'] ?? '';
-        $password = $postData['password'] ?? '';
+        $email = $postData['email'] ?? '';
+        $number = $postData['number'] ?? '';
+        $country = $postData['country'] ?? '';
         $password = $postData['password'] ?? '';
         
-        $this->signupModel->setData($username, $password);
+        $this->signupModel->setData($username,   $email,
+        $number,
+       $country, $password);
 
         if ($this->signupModel->checkUsername()) {
             $this->sendResponse(['status' => 'failed', 'message' => 'Username already taken.']);
@@ -88,7 +90,7 @@ class SignupAuth {
     private function sendResponse(array $response): void {
         header('Content-Type: application/json');
         echo json_encode($response);
-        exit; // Ensure that no further output is sent
+        exit;
     }
 }
 
@@ -106,12 +108,17 @@ class UserSignup {
     }
 
     public function validateSignupData(): ?array {
-        if (empty($this->data['username']) || empty($this->data['password'])) {
+
+        $errors = [];
+        if (empty($this->data['username']) || empty($this->data['password']) || empty($this->data['number']) || empty($this->data['email']) || empty($this->data['country'])) {
             $this->sendResponse(['status' => 'error', 'message' => 'Username and password are required.']);
             return null;
         }
 
         $username = trim($this->data['username']);
+        $email = trim($this->data['email']);
+        $number = trim($this->data['number']);
+        $country = trim($this->data['country']);
         $password = trim($this->data['password']);
         
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $username) || strlen($username) < 5 || strlen($username) > 20) {
@@ -122,6 +129,34 @@ class UserSignup {
             return null;
         }
 
+
+        if (strlen($country) < 2) {
+            $this->sendResponse([
+                'status' => 'error',
+                'message' => 'Invalid country. It must be at least 2 characters long.'
+            ]);
+            return null;
+        }
+
+        if (!preg_match('/^\d{10}$/', $number)) {
+            $this->sendResponse([
+                'status' => 'error',
+                'message' => 'Invalid phone number. It must be exactly 10 digits.'
+            ]);
+            return null;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Invalid email format!";
+        }else{
+            return !empty($errors) ? $errors : null;
+        }
+        
+        
+        
+        
+
+
         $passwordPattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
         if (!preg_match($passwordPattern, $password)) {
             $this->sendResponse([
@@ -130,6 +165,7 @@ class UserSignup {
             ]);
             return null;
         }
+
 
         return ['username' => $username, 'password' => $password];
     }
