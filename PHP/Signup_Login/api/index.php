@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . '/../PHP/Signup_Login/config/Database.php');
+require_once(__DIR__ . '/../config/Database.php');
+require_once(__DIR__ . '/../assets/Models/signup.php'); // Make sure this path is correct
 
 if (isset($_POST['submit'])) {
     // Sanitize and validate inputs
@@ -10,10 +11,7 @@ if (isset($_POST['submit'])) {
     $password = isset($_POST['password']) ? $_POST['password'] : null;
 
     if ($username && $email && $number && $country && $password) {
-        // Include necessary files
-        include(__DIR__ . '/Signup_Login/assets/Models/signup.php'); // Make sure this path is correct
-
-        // Create an instance of SignupModel
+        // include(__DIR__ . '/Signup_Login/assets/Models/signup.php'); 
         $signup = new SignupModel();
 
         // Set user data
@@ -21,9 +19,9 @@ if (isset($_POST['submit'])) {
 
         // Try to insert the user
         $result = $signup->setUser();
-
+        
         if ($result !== false) {
-            header("Location: ../success.html"); 
+            echo "Good";
             exit();
         } else {
             header("Location: ./insert.html?error=" . urlencode('Failed to insert user.')); // Return a generic error message

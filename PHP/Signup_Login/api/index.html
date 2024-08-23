@@ -6,7 +6,7 @@
     <title>Document</title>
   </head>
   <body>
-    <form action="./index.php" method="post">
+    <form action="../api/index.php" method="POST">
       <h1 className="text-right">
         Already have a STAFFed account{" "}
         <span className="text-blue-600 cursor-pointer " onClick="{signup}">
@@ -20,32 +20,36 @@
           className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           placeholder="Your first and last name"
           name="username"
+          required
         />
-        <h1></h1>
       </div>
       <input
         type="text"
         name="email"
         placeholder="Email address"
         className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+        required
       />
       <input
         type="text"
-        name="user_number"
+        name="number"
         placeholder="Phone number"
         className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+        required
       />
       <input
         type="text"
         name="country"
         placeholder="Country of residence"
         className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+        required
       />
       <input
         type="text"
         name="password"
         placeholder="Create password"
         className="border border-gray-700 w-full px-3 py-3 rounded-xl"
+        required
       />
       <input type="submit" value="submit" name="submit" />
     </form>

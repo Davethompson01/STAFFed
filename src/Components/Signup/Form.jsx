@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../Context/userProvider";
 
 const LandingPage = () => {
- 
   const setUserType = useUser();
   const navigate = useNavigate();
   const signup = (e) => {
@@ -82,7 +81,7 @@ const LandingPage = () => {
       <div className="px-12">
         <form
           action=""
-          method="post"
+          method="POST"
           className="w-[550px] absolute bg-white right-[100px] top-[150px] z-20 rounded-lg p-3 border grid gap-3 border-gray-400 px-4"
         >
           <h1 className="text-right">
