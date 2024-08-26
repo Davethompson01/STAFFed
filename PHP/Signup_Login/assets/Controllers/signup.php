@@ -2,8 +2,8 @@
 
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 include_once(__DIR__ . '/../../Config/Database.php');
 
@@ -52,7 +52,9 @@ class SignupController  {
         if ($stmt->execute()) {
             return $this->connection->lastInsertId();
         }
-        return false;
+        else{
+            return false;
+        }
     }
 }
 
@@ -79,7 +81,7 @@ class SignupAuth {
 
        if ($this->SignupController->checkUsername()) {
         // Redirect with error message
-        header('Location: /signup.php?error=username_taken');
+        ('Location: /signup.php?error=username_taken');
         exit;
     }
 

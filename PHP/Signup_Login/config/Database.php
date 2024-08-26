@@ -8,9 +8,9 @@ class Database {
 
     private $connection;
 
-    function __construct() {
-        // Constructor is empty. Consider adding initialization code if needed.
-    }
+    // function __construct() {
+    //     // Constructor is empty. Consider adding initialization code if needed.
+    // }
 
     public function getConnection() {
         $this->connection = null;
@@ -23,4 +23,14 @@ class Database {
         }
         return $this->connection; // Fix: Return the connection object
     }
+
+}
+
+$db = new Database();
+$connection = $db->getConnection();
+
+if ($connection) {
+    echo "Connection successful!";
+} else {
+    echo "Connection failed!";
 }

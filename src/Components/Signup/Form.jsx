@@ -1,28 +1,57 @@
-import React from "react";
 import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../Context/userProvider";
 
 const LandingPage = () => {
-  const setUserType = useUser();
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    number: "",
+    country: "",
+    password: "",
+  });
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // Hook for programmatic navigation
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios({
+        url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/index.php",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: new URLSearchParams(formData).toString(), // Convert formData to string
+      });
+
+      const data = response.data; // Extract the data from the response
+
+      if (data.status === "success") {
+        setMessage(data.message);
+        navigate("/onboarding"); // Redirect on success
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("An error occurred. Please try again.");
+    }
+  };
+
+
   const signup = (e) => {
     e.preventDefault();
     navigate("/onboarding");
-  };
-  const handlelogin = () => {
-    setUserType(role);
-    switch (role) {
-      case "Employer":
-        navigate("/employer");
-        break;
-      case "Employee":
-        navigate("/employee");
-        break;
-      default:
-        navigate("/");
-        break;
-    }
   };
 
   return (
@@ -81,12 +110,13 @@ const LandingPage = () => {
       </div>
       <div className="px-12">
         <form
-          action="http://localhost/my-STAFFed/PHP/Signup_Login/api/index.php"
+          onSubmit={handleSubmit}
+          action=""
           method="POST"
           className="w-[550px] absolute bg-white right-[100px] top-[150px] z-20 rounded-lg p-3 border grid gap-3 border-gray-400 px-4"
         >
           <h1 className="text-right">
-            Already have a STAFFed account{" "}
+            Already have a STAFFed account
             <span className="text-blue-600 cursor-pointer " onClick={signup}>
               sign in{" "}
             </span>
@@ -95,33 +125,42 @@ const LandingPage = () => {
           <div className="grid gap-3">
             <input
               type="text"
+              value={formData.username}
+              onChange={handleChange}
               className="border border-gray-700 w-full px-3 py-3 rounded-xl"
               placeholder="Your first and last name"
               name="username"
             />
-            <h1></h1>
           </div>
           <input
             type="text"
             name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Email address"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
           <input
             type="text"
             name="number"
+            onChange={handleChange}
+            value={formData.number}
             placeholder="Phone number"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
           <input
             type="text"
+            value={formData.country}
             name="country"
+            onChange={handleChange}
             placeholder="Country of residence"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
           <input
             type="text"
             name="password"
+            value={formData.password}
+            onChange={handleChange}
             placeholder="Create password"
             className="border border-gray-700 w-full px-3 py-3 rounded-xl"
           />
@@ -129,7 +168,8 @@ const LandingPage = () => {
             <input
               type="submit"
               name="submit"
-              value="Start a Feee trial"
+              onChange={handleChange}
+              value="Start a Free trial"
               className=" bg-red-400 p-3 rounded-md text-white font-semibold"
             />
           </div>
@@ -212,11 +252,6 @@ const LandingPage = () => {
             </linearGradient>
           </defs>
         </svg>
-
-        <div>
-          <button onClick={() => handlelogin("employer")}>Hire a Staff</button>
-          <button onClick={() => handlelogin("employee")}>Find</button>
-        </div>
       </div>
     </div>
   );
