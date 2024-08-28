@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const [onboarding, setonboarding] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -33,21 +34,26 @@ const LandingPage = () => {
         },
         data: new URLSearchParams(formData).toString(), // Convert formData to string
       });
+      console.log("Response data:", response.data);
+      // const data = response.data; // Extract the data from the response
 
-      const data = response.data; // Extract the data from the response
-
-      if (data.status === "success") {
-        setMessage(data.message);
-        navigate("/onboarding"); // Redirect on success
+      if (response.data.status === 200) {
+        navigate("/onboarding");
+        console.log("Navigating to /onboarding");
+        setMessage(response.message);
+        console.log(response.status);
+      } else if (response.data.status === "error") {
+        console.log("Error:", response.data.message);
+        setMessage(response.data.message);
       } else {
-        setMessage(data.message);
+        // console.log("error hhh");
+        setMessage(response.message);
       }
     } catch (error) {
       console.error("Error:", error);
       setMessage("An error occurred. Please try again.");
     }
   };
-
 
   const signup = (e) => {
     e.preventDefault();
@@ -168,7 +174,7 @@ const LandingPage = () => {
             <input
               type="submit"
               name="submit"
-              onChange={handleChange}
+              // onChange={handleChange}
               value="Start a Free trial"
               className=" bg-red-400 p-3 rounded-md text-white font-semibold"
             />

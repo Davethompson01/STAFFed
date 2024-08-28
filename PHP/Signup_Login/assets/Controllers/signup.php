@@ -7,7 +7,7 @@
 
 include_once(__DIR__ . '/../../Config/Database.php');
 
-// Define the SignupModel that instantiate the Database class
+// Define the SignupMo
 class SignupController  {
 
     private $username;
@@ -80,18 +80,15 @@ class SignupAuth {
        $country, $password);
 
        if ($this->SignupController->checkUsername()) {
-        // Redirect with error message
-        ('Location: /signup.php?error=username_taken');
-        exit;
+        $this->sendResponse(['status' => 'error', 'message' => 'Username already taken.']);
+        return; // Stop executi
     }
 
         $userId = $this->SignupController->setUser();
-
-        if ($userId !== false) {
-            header("Location". __DIR__ . '/../../../../src/Pages/SignUp.jsx'); 
+ if ($userId !== false) {
+            $this->sendResponse(['status' => 'success', 'message' => 'Signup successful']);
         } else {
-            $this->sendResponse(['status' => 'failed', 'message' => 'Signup failed. Please try again.']);
-            die();
+            $this->sendResponse(['status' => 'error', 'message' => 'Signup failed. Please try again.']);
         }
     }
     
@@ -114,8 +111,8 @@ class UserSignup {
         $input = file_get_contents('php://input');
         $this->data = json_decode($input, true) ?? [];
 
-        error_log('Raw input: ' . $input);
-        error_log('Decoded data: ' . print_r($this->data, true));
+        // error_log('Raw input: ' . $input);
+        // error_log('Decoded data: ' . print_r($this->data, true));
     }
 
     public function validateSignupData(): ?array {
