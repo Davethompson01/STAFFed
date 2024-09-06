@@ -44,6 +44,7 @@ const Email = () => {
         />
         <input
           type="submit"
+          
           value="Sign in with Email"
           className="border-[2px] border-blue-700 w-full p-3 rounded-xl font-semibold"
         />

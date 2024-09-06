@@ -31,7 +31,6 @@ class SignupController  {
     }
 
     public function checkUsername() {
-        // Concatenate first_name and last_name to check against the username
         $query = "SELECT username FROM staffed_users WHERE  username = :username;";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $this->username);
@@ -57,9 +56,7 @@ class SignupController  {
         }
     }
 }
-
 include_once(__DIR__ . '/../Controllers/Signup.php');
-
 class SignupAuth {
 
     private $SignupController;
@@ -85,7 +82,7 @@ class SignupAuth {
     }
 
         $userId = $this->SignupController->setUser();
- if ($userId !== false) {
+ if ($userId === true) {
             $this->sendResponse(['status' => 'success', 'message' => 'Signup successful']);
         } else {
             $this->sendResponse(['status' => 'error', 'message' => 'Signup failed. Please try again.']);

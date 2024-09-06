@@ -9,15 +9,7 @@ header('Content-Type: application/json');
     require_once(__DIR__ . '/../assets/Controllers/signup.php');
 
 
-    // $response = ['status' => 'error', 'message' => 'An unexpected error occurred.'];
-    // user_id	
-    // username	
-    // user_email	
-    // user_password	
-    // user_country	
-    // user_phoneNumber Descending 1	
-    // clicked_at	
-    // click_type	
+   	
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = isset($_POST['username']) ? htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8') : null;

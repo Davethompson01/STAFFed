@@ -32,10 +32,9 @@ const LandingPage = () => {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: new URLSearchParams(formData).toString(), // Convert formData to string
+        data: new URLSearchParams(formData), // Convert formData to string
       });
       console.log("Response data:", response.data);
-      // const data = response.data; // Extract the data from the response
 
       if (response.data.status === 200) {
         navigate("/onboarding");

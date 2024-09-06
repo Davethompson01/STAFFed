@@ -12,16 +12,19 @@ if (isset($_POST['submit'])) {
         $user = $loginModel->checkUser();
 
         if (is_array($user)) {
-            // User authenticated successfully
-            echo "Login successful. Welcome, " . htmlspecialchars($user['user_email']) . "!";
+            $response = [
+                'status' => 'success',
+                'message' => 'Login successful. Welcome, ' . htmlspecialchars($user['user_email']) . '!'
+            ];
+            echo json_encode($response);
         } elseif ($user === "Wrong") {
             // Password is incorrect
-            echo "Invalid from David";
+            echo json_encode(['status'=>'error',"message"=>'Invalid password']);
         } else {
             // Email does not exist
-            echo "Invalid email or password.";
+            echo json_encode(['status'=>'error','message'=>'Invalid email']);
         }
     } else {
-        echo "Email and password are required.";
+         echo json_encode(['status'=>'error','message'=>'Invalid email and password']);
     }
 }

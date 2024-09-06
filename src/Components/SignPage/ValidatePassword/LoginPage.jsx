@@ -1,18 +1,45 @@
 import React from "react";
 import Staffed from "../sign_up/Staffed";
-import { useUser } from "../../Context/userProvider";
+import { useState } from "react";
+// import { useUser } from "../../Context/userProvider";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { setIsSignedUp } = useUser();
+  // const { setIsSignedUp } = useUser();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+  const handleSubmit = async () => {
+    try {
+      const response = await axios({
+        url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/login.php",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlrncoded",
+        },
+        data: new URLSearchParams(formData),
+      });
+      console.log("Response data:", response.data);
+    } catch (error) {
+      if (condition) {
+      }
+    }
+  };
 
   const handleOtpPage = (event) => {
-
     event.preventDefault();
     navigate("/MAGIC-CODE");
   };
-
   const linearStyle = {
     background: "linear-gradient(to left, #2D65BD, #035A74)",
     color: "white",
@@ -21,11 +48,6 @@ const LoginPage = () => {
     cursor: "pointer",
   };
 
-  const usertype = (event) => {
-    setIsSignedUp(true)
-    event.preventDefault()
-    navigate("/employee")
-  };
   return (
     <>
       <div className="relative">
@@ -36,19 +58,36 @@ const LoginPage = () => {
         </div>
       </div>
       <div>
-        <form action="" method="post" className="grid gap-3 py-3 px-5">
+        <form
+          action=""
+          method="post"
+          className="grid gap-3 py-3 px-5"
+          onChange={handleSubmit}
+        >
           <input
             type="text"
             name="email"
+            onChange={handleChange}
             placeholder="Email address"
             className="mt-4 border border-solid border-gray-500 w-full p-3 rounded-xl"
             required
           />
           <input
             type="password"
+            name="password"
+            onChange={handleChange}
             placeholder="Password"
             className="border border-gray-400 w-full p-3 rounded-xl font-semibold"
           />
+          <div className="py-3 px-5 mt-3">
+            <input
+              type="submit"
+              name="submit"
+              style={linearStyle}
+              className="p-3"
+            />
+            Sign In
+          </div>
         </form>
         <p
           className="px-5 text-gray-700 cursor-pointer"
@@ -57,11 +96,7 @@ const LoginPage = () => {
           Forgot password?
         </p>
       </div>
-      <div className="py-3 px-5 mt-3">
-        <div style={linearStyle} className="p-3" onClick={usertype}>
-          Sign In
-        </div>
-      </div>
+
       <div className="py-3 px-5">
         <p
           className="text-center border-[2px]  p-3 rounded-lg"
