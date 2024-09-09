@@ -16,18 +16,20 @@ class SignupController  {
     private $country;
     private $password;
     private $connection;
+    private $ipAddress;
 
     public function __construct() {
         $database = new Database();
         $this->connection = $database->getConnection();
     }
 
-    public function setData($username, $email,$number,$country,$password) {
+    public function setData($username, $email,$number,$country,$password,$ipAddress) {
         $this->username = htmlspecialchars(trim($username), ENT_QUOTES, 'UTF-8');
         $this->email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
         $this->number = trim($number);
         $this->country = trim($country);
         $this->password = password_hash($password,PASSWORD_BCRYPT);
+        $this->ipAddress = trim($ipAddress);
     }
 
     public function checkUsername() {
@@ -39,14 +41,15 @@ class SignupController  {
     }
     
 
-    public function setUser() {
-        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber) VALUES (:username, :email, :password, :country, :number);";
+    public function setUser($username, $email, $number, $country, $password, $ipAddress) {
+        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address) VALUES (:username, :email, :password, :country, :number,:ip_address);";
         $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':country', $this->country);
-        $stmt->bindParam(':number', $this->number);
-        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':country', $country);
+        $stmt->bindParam(':number', $number);
+        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':ip_address', $ipAddress);
 
         if ($stmt->execute()) {
             return $this->connection->lastInsertId();
@@ -66,6 +69,7 @@ class SignupAuth {
     }
 
     public function handleSignup(array $postData): void {
+        $ipAddress = $postData['ip_address'] ?? null;
         $username = $postData['username'] ?? '';
         $email = $postData['email'] ?? '';
         $number = $postData['number'] ?? '';
@@ -74,15 +78,17 @@ class SignupAuth {
         
         $this->SignupController->setData($username,   $email,
         $number,
-       $country, $password);
+       $country, $password,$ipAddress);
 
        if ($this->SignupController->checkUsername()) {
         $this->sendResponse(['status' => 'error', 'message' => 'Username already taken.']);
         return; // Stop executi
     }
 
-        $userId = $this->SignupController->setUser();
- if ($userId === true) {
+        $userId = $this->SignupController->setUser($username,   $email,
+        $number,
+       $country, $password,$ipAddress);
+ if ($userId) {
             $this->sendResponse(['status' => 'success', 'message' => 'Signup successful']);
         } else {
             $this->sendResponse(['status' => 'error', 'message' => 'Signup failed. Please try again.']);
