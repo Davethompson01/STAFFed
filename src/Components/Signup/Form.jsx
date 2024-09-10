@@ -22,18 +22,31 @@ const LandingPage = () => {
     }));
   };
 
+  console.log(formData);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios({
-        url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/index.php",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        data: new URLSearchParams(formData), // Convert formData to string
-      });
+      // const response = await axios({
+      //   url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/Signup.php",
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/x-www-form-urlencoded",
+      //   },
+      //   formData, // Convert formData to string
+      // });
+
+      const data = await axios.post(
+        "http://localhost/my-STAFFed/PHP/Signup_Login/api/Signup.php",
+        formData,
+        //     "Content-Type": "application/x-www-form-urlencoded",
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
       console.log("Response data:", response.data);
 
       if (response.data.status === 200) {

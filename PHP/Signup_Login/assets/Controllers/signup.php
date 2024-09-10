@@ -23,14 +23,22 @@ class SignupController  {
         $this->connection = $database->getConnection();
     }
 
-    public function setData($username, $email,$number,$country,$password,$ipAddress) {
+
+    public function generateToken() {
+        return bin2hex(random_bytes(32)); // Generates a secure 64-character token
+    }
+
+    
+    public function setData($username, $email, $number, $country, $password, $ipAddress) {
         $this->username = htmlspecialchars(trim($username), ENT_QUOTES, 'UTF-8');
         $this->email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
         $this->number = trim($number);
         $this->country = trim($country);
-        $this->password = password_hash($password,PASSWORD_BCRYPT);
+        $this->password = password_hash($password, PASSWORD_BCRYPT); // Hash happens here
         $this->ipAddress = trim($ipAddress);
     }
+    
+    
 
     public function checkUsername() {
         $query = "SELECT username FROM staffed_users WHERE  username = :username;";
@@ -42,7 +50,8 @@ class SignupController  {
     
 
     public function setUser($username, $email, $number, $country, $password, $ipAddress) {
-        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address) VALUES (:username, :email, :password, :country, :number,:ip_address);";
+        $userToken = $this->generateToken();
+        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address,user_token) VALUES (:username, :email, :password, :country, :number,:ip_address, :user_token);";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
@@ -50,9 +59,10 @@ class SignupController  {
         $stmt->bindParam(':number', $number);
         $stmt->bindParam(':password', $password);
         $stmt->bindParam(':ip_address', $ipAddress);
+        $stmt->bindParam(':user_token', $userToken);
 
         if ($stmt->execute()) {
-            return $this->connection->lastInsertId();
+            return ['userId' => $this->connection->lastInsertId(), 'userToken' => $userToken];
         }
         else{
             return false;
@@ -89,7 +99,7 @@ class SignupAuth {
         $number,
        $country, $password,$ipAddress);
  if ($userId) {
-            $this->sendResponse(['status' => 'success', 'message' => 'Signup successful']);
+    $this->sendResponse(['status' => 'success', 'message' => 'Signup successful', 'token' => $userId['userToken']]);
         } else {
             $this->sendResponse(['status' => 'error', 'message' => 'Signup failed. Please try again.']);
         }
@@ -138,7 +148,7 @@ class UserSignup {
         $email = trim($this->data['email']);
         $number = trim($this->data['number']);
         $country = trim($this->data['country']);
-        $password = trim($this->data['password']);
+        $password = $this->data['password'];
         
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $username) || strlen($username) < 5 || strlen($username) > 20) {
             $errors[] = 'Invalid username format.';

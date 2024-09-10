@@ -1,10 +1,17 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); 
+header("Access-Control-Allow-Headers: Content-Type"); // 
+header('Content-Type: application/json');
+
+
 require_once(__DIR__ . '/../Config/Database.php');
 require_once(__DIR__ . '/../assets/Controllers/login.php');
 
-if (isset($_POST['submit'])) {
-    $email = $_POST['email'] ?? null;
-    $password = $_POST['password'] ?? null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $email = $input['email'] ?? null;
+    $password = $input['password'] ?? null;
 
     if ($email && $password) {
         $loginModel = new LoginModel();
@@ -14,10 +21,11 @@ if (isset($_POST['submit'])) {
         if (is_array($user)) {
             $response = [
                 'status' => 'success',
-                'message' => 'Login successful. Welcome, ' . htmlspecialchars($user['user_email']) . '!'
+                'message' => 'Login successful. Welcome, ' . htmlspecialchars($user['user_token']) . '!'
             ];
         
             echo json_encode($response);
+            
         } elseif ($user === "Wrong") {
             // Password is incorrect
             echo json_encode(['status'=>'error',"message"=>'Invalid password']);
