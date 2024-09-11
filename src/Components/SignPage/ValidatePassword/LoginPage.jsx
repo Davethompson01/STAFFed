@@ -1,17 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Staffed from "../sign_up/Staffed";
-import { useState } from "react";
-// import { useUser } from "../../Context/userProvider";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  // const { setIsSignedUp } = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [message, setMessage] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -19,27 +18,46 @@ const LoginPage = () => {
       [name]: value,
     }));
   };
-  const handleSubmit = async () => {
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent form refresh
     try {
-      const response = await axios({
-        url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/login.php",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlrncoded",
-        },
-        data: new URLSearchParams(formData),
-      });
+      // No need for URLSearchParams, send the formData directly
+      const response = await axios.post(
+        "http://localhost/my-STAFFed/PHP/Signup_Login/api/login.php",
+        formData, // Send formData directly as JSON
+        {
+          headers: {
+            "Content-Type": "application/json", // JSON content-type header
+          },
+        }
+      );
+  
       console.log("Response data:", response.data);
-    } catch (error) {
-      if (condition) {
+  
+      if (response.data.status === 'success') {
+        // Store token if needed
+        console.log("Navigating to /onboarding");
+        navigate("/onboarding");
+        setMessage(response.data.message);
+      } else if (response.data.status === "error") {
+        console.log("Error:", response.data.message);
+        setMessage(response.data.message);
+      } else {
+        setMessage("An unexpected error occurred.");
       }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("An error occurred. Please try again.");
     }
   };
+  
 
   const handleOtpPage = (event) => {
     event.preventDefault();
     navigate("/MAGIC-CODE");
   };
+
   const linearStyle = {
     background: "linear-gradient(to left, #2D65BD, #035A74)",
     color: "white",
@@ -59,15 +77,13 @@ const LoginPage = () => {
       </div>
       <div>
         <form
-          action=""
-          method="post"
           className="grid gap-3 py-3 px-5"
-          onChange={handleSubmit}
+          onSubmit={handleLogin}
         >
           <input
             type="text"
             name="email"
-            onChange={handleChange}
+            onChange={handleChange} // Capture email input
             placeholder="Email address"
             className="mt-4 border border-solid border-gray-500 w-full p-3 rounded-xl"
             required
@@ -75,20 +91,21 @@ const LoginPage = () => {
           <input
             type="password"
             name="password"
-            onChange={handleChange}
+            onChange={handleChange} // Capture password input
             placeholder="Password"
             className="border border-gray-400 w-full p-3 rounded-xl font-semibold"
+            required
           />
           <div className="py-3 px-5 mt-3">
             <input
               type="submit"
-              name="submit"
+              value="Sign In"
               style={linearStyle}
               className="p-3"
             />
-            Sign In
           </div>
         </form>
+        {message && <p>{message}</p>}
         <p
           className="px-5 text-gray-700 cursor-pointer"
           onClick={handleOtpPage}

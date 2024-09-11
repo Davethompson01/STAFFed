@@ -24,6 +24,47 @@ const Email = () => {
     navigate("/Validate-password"); // Navigate to the login page
   };
 
+const handlelogin = async (e)=>{
+  try {
+    // const response = await axios({
+    //   url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/Signup.php",
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //   },
+    //   formData, // Convert formData to string
+    // });
+
+    const data = await axios.post(
+      "http://localhost/my-STAFFed/PHP/Signup_Login/api/login.php",
+      formData,
+      //     "Content-Type": "application/x-www-form-urlencoded",
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log("Response data:", response.data);
+
+    if (response.data.status === 200) {
+      navigate("/onboarding");
+      console.log("Navigating to /onboarding");
+      setMessage(response.message);
+      console.log(response.status);
+    } else if (response.data.status === "error") {
+      console.log("Error:", response.data.message);
+      setMessage(response.data.message);
+    } else {
+      // console.log("error hhh");
+      setMessage(response.message);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    setMessage("An error occurred. Please try again.");
+  }
+};
+
   return (
     <div className="px-5 py-3">
       <form
