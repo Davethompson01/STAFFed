@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($email && $password) {
         $loginModel = new LoginModel();
-        $loginModel->setData(['email' => $email, 'password' => $password]);
+        $loginModel->setData(data: ['email' => $email, 'password' => $password]);
         $user = $loginModel->checkUser();
 
         if (is_array($user)) {
