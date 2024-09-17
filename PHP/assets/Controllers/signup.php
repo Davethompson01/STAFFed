@@ -2,12 +2,11 @@
 
 <?php
 
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+require_once (__DIR__ . "../../../composer/vendor/autoload.php");
+use \Firebase\JWT\JWT;
+
 
 include_once(__DIR__ . '/../../Config/Database.php');
-
-// Define the SignupMo
 class SignupController  {
 
     private $username;
@@ -17,6 +16,8 @@ class SignupController  {
     private $password;
     private $connection;
     private $ipAddress;
+    private $userType;
+    private $secret_key = "1234Staffed";
 
     public function __construct() {
         $database = new Database();
@@ -29,40 +30,60 @@ class SignupController  {
     }
 
     
-    public function setData($username, $email, $number, $country, $password, $ipAddress) {
+    public function setData($username, $email, $number, $country, $password, $ipAddress,$userType) {
         $this->username = htmlspecialchars(trim($username), ENT_QUOTES, 'UTF-8');
         $this->email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
         $this->number = trim($number);
         $this->country = trim($country);
         $this->password = password_hash($password, PASSWORD_BCRYPT); // Hash happens here
         $this->ipAddress = trim($ipAddress);
+        $this->userType = trim($userType);
     }
     
     
 
-    public function checkUsername() {
-        $query = "SELECT username FROM staffed_users WHERE  username = :username;";
+    public function checkEmail() {
+        $query = "SELECT user_email FROM staffed_users WHERE  user_email = :user_email;";
         $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(':user_email', $this->email);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
     }
     
+    private function generateJWT($userId, $username) {
+        $issuedAt = time();
+        $expirationTime = $issuedAt + 3600; // jwt valid for 1 hour
+        $payload = array(
+            "iss" => "your_domain.com",    // Issuer
+            "aud" => "your_domain.com",    // Audience
+            "iat" => $issuedAt,            // Issued at
+            "exp" => $expirationTime,      // Expiration time
+            "data" => array(
+                "id" => $userId,
+                "username" => $username
+            )
+        );
+        $jwt = JWT::encode($payload, $this->secret_key, '1234Staffed');
 
-    public function setUser($username, $email, $number, $country, $password, $ipAddress) {
+        return $jwt;
+    }
+
+
+    public function setUser($username, $email, $number, $country, $password, $ipAddress,$userType) {
         $userToken = $this->generateToken();
-        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address,user_token) VALUES (:username, :email, :password, :country, :number,:ip_address, :user_token);";
+        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address,user_token,user_type) VALUES (:username, :email, :password, :country, :number,:ip_address, :user_token,,user_type);";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':country', $country);
-        $stmt->bindParam(':number', $number);
+        $stmt->bindParam(':number', var: $number);
         $stmt->bindParam(':password', $password);
         $stmt->bindParam(':ip_address', $ipAddress);
         $stmt->bindParam(':user_token', $userToken);
+        $stmt->bindParam(':user_type', $userType);
 
         if ($stmt->execute()) {
-            return ['userId' => $this->connection->lastInsertId(), 'userToken' => $userToken];
+            return $this->generateJWT($this->connection->lastInsertId(), $username);
         }
         else{
             return false;
@@ -85,22 +106,26 @@ class SignupAuth {
         $number = $postData['number'] ?? '';
         $country = $postData['country'] ?? '';
         $password = $postData['password'] ?? '';
+        $userType = $postData['user_type'] ?? '';
         
         $this->SignupController->setData($username,   $email,
         $number,
-       $country, $password,$ipAddress);
+       $country, $password,$ipAddress,$userType);
 
-       if ($this->SignupController->checkUsername()) {
-        $this->sendResponse(['status' => 'error', 'message' => 'Username already taken.']);
-        return; // Stop executi
+       if ($this->SignupController->checkEmail()) {
+        $this->sendResponse(['status' => 'error', 'message' => 'Email already taken.']);
+        return; 
     }
 
         $userId = $this->SignupController->setUser($username,   $email,
         $number,
-       $country, $password,$ipAddress);
+       $country, $password,$ipAddress,$userType);
  if ($userId) {
     $this->sendResponse(['status' => 'success', 'message' => 'Signup successful', 'token' => $userId['userToken']]);
-        } else {
+        }
+        
+        
+        else {
             $this->sendResponse(['status' => 'error', 'message' => 'Signup failed. Please try again.']);
         }
     }
@@ -110,6 +135,8 @@ class SignupAuth {
         echo json_encode($response);
         exit;
     }
+
+
 }
 
 class UserSignup {
@@ -123,62 +150,64 @@ class UserSignup {
     private function getData() {
         $input = file_get_contents('php://input');
         $this->data = json_decode($input, true) ?? [];
-
-        // error_log('Raw input: ' . $input);
-        // error_log('Decoded data: ' . print_r($this->data, true));
     }
 
     public function validateSignupData(): ?array {
         $errors = [];
-    
-        // Check for missing fields
-        $requiredFields = ['username', 'password', 'number', 'email', 'country'];
+
+        $requiredFields = ['username', 'password', 'number', 'email', 'country','user_type'];
         foreach ($requiredFields as $field) {
             if (empty($this->data[$field])) {
                 $errors[] = ucfirst($field) . ' is required.';
             }
         }
-    
+
         if (!empty($errors)) {
             $this->sendResponse(['status' => 'error', 'message' => implode(', ', $errors)]);
             return null;
         }
-    
+
+        // Additional validations
         $username = trim($this->data['username']);
         $email = trim($this->data['email']);
         $number = trim($this->data['number']);
         $country = trim($this->data['country']);
         $password = $this->data['password'];
+        $userType = trim($this->data['user_type']);
         
+        // Username validation
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $username) || strlen($username) < 5 || strlen($username) > 20) {
             $errors[] = 'Invalid username format.';
         }
-    
+
+        // Country validation (ensure minimum 2 characters)
         if (strlen($country) < 2) {
             $errors[] = 'Invalid country.';
         }
-    
+
+        // Phone number validation
         if (!preg_match('/^\d{10}$/', $number)) {
             $errors[] = 'Invalid phone number.';
         }
-    
+
+        // Email validation
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Invalid email format!';
         }
-    
+
+        // Password validation
         $passwordPattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
         if (!preg_match($passwordPattern, $password)) {
             $errors[] = 'Invalid password format.';
         }
-    
+
         if (!empty($errors)) {
             $this->sendResponse(['status' => 'error', 'message' => implode(', ', $errors)]);
             return null;
         }
-        
-        return ['username' => $username, 'email' => $email, 'number' => $number, 'country' => $country, 'password' => $password];
+
+        return ['username' => $username, 'email' => $email, 'number' => $number, 'country' => $country, 'password' => $password,'userType'=> $userType];
     }
-    
 
     private function sendResponse(array $response) {
         header('Content-Type: application/json');
@@ -186,3 +215,5 @@ class UserSignup {
         exit;
     }
 }
+
+

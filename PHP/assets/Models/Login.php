@@ -31,7 +31,7 @@ class LoginModel {
                     return "Wrong";     
                 }
             } else {
-                return null; // Email does not exist
+                return null; 
             }
         } catch (PDOException $e) {
             error_log("Error in checkUser: " . $e->getMessage());

@@ -1,10 +1,14 @@
 <?php
 include_once (__DIR__ . '/../Models/Login.php');
+use Firebase\JWT\JWT;
+
+// use \Firebase\JWT\JWT;
 
 class LoginAuth {
 
     private $userLogin;
     private $loginModel;
+    private $secret_key = "1234Staffed"; // Secret key for JWT signing
 
     public function __construct() {
         $this->userLogin = new UserLogin();
@@ -17,9 +21,12 @@ class LoginAuth {
         if ($cleanedData) {
             $this->loginModel->setData($cleanedData);
             $user = $this->loginModel->checkUser();
-            if ($user) {
-                $this->sendResponse(['status' => 'success', 'message' => 'Login successful.', 'user_details' => $user]);
-                echo json_encode($user);
+            if (is_array($user)) {
+                // Generate a JWT token if login is successful
+                $jwtToken = $this->generateJWT($user['user_id'], $user['username']);
+                $this->sendResponse(['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user]);
+            } elseif ($user === "Wrong") {
+                $this->sendResponse(['status' => 'error', 'message' => 'Invalid password.']);
             } else {
                 $this->sendResponse(['status' => 'error', 'message' => 'Invalid username or password.']);
             }
@@ -30,7 +37,29 @@ class LoginAuth {
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+
+    // Generate JWT token
+    private function generateJWT($userId, $username) {
+        $issuedAt = time();
+        $expirationTime = $issuedAt + 3600; // JWT valid for 1 hour
+        $payload = array(
+            "iss" => "your_domain.com",    // Issuer
+            "aud" => "your_domain.com",    // Audience
+            "iat" => $issuedAt,            // Issued at
+            "exp" => $expirationTime,      // Expiration time
+            "data" => array(
+                "id" => $userId,
+                "username" => $username
+            )
+        );
+
+        // Encode the array to a JWT string
+        $jwt = JWT::encode($payload, $this->secret_key, 'HS256');
+
+        return $jwt;
+    }
 }
+
 
 class UserLogin {
 
