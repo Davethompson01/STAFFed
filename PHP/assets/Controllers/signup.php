@@ -54,10 +54,10 @@ class SignupController  {
         $issuedAt = time();
         $expirationTime = $issuedAt + 3600; // jwt valid for 1 hour
         $payload = array(
-            "iss" => "your_domain.com",    // Issuer
-            "aud" => "your_domain.com",    // Audience
-            "iat" => $issuedAt,            // Issued at
-            "exp" => $expirationTime,      // Expiration time
+            "iss" => "your_domain.com",   
+            "aud" => "your_domain.com",    
+            "iat" => $issuedAt,            
+            "exp" => $expirationTime,   
             "data" => array(
                 "id" => $userId,
                 "username" => $username
