@@ -1,8 +1,12 @@
 <?php
 
 require_once (__DIR__ . "/../Models/profile.php");
+
+
+require_once (__DIR__ . "/../../composer/vendor/autoload.php");
 use \Firebase\JWT\JWT;
-class UserController {
+use \Firebase\JWT\Key;
+class userprofile {
     private $userModel;
     private $secret_key = "1234Staffed";
 
@@ -12,50 +16,24 @@ class UserController {
 
 
     
-    function verifyJWT($jwt) {
+    public function verifyJWT($jwt) {
         try {
-            $key = new Firebase\JWT\Key($this->secret_key, 'HS256');
-            $decoded = JWT::decode($jwt, $key, ['HS256']);
+            // Ensure $jwt is a string
+            if (!is_string($jwt)) {
+                throw new Exception("JWT token must be a string");
+            }
+            $key = new Key($this->secret_key, 'HS256'); // Use the Key class
+            $decoded = JWT::decode($jwt, $key);
             return $decoded;
         } catch (Exception $e) {
             return null; // Handle errors
         }
     }
-    public function uploadImage() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Retrieve the logged-in user's ID from the JWT token
-            $jwt = $this->getUserIdFromToken();
-
-            if ($jwt) {
-                // Validate that username is set
-                $userId = $this->verifyJWT($jwt);
-                $username = $_POST['username'] ?? null;
-                $profilePicture = $_FILES['user_profile'] ?? null;
-
-                // Check if the file is uploaded
-                if ($profilePicture && $profilePicture['error'] === UPLOAD_ERR_OK) {
-                    // Store image and get the path
-                    $imagePath = $this->storeImage($profilePicture);
-
-                    if ($imagePath && $userId) {
-                        // Call model to update the user's profile picture
-                        $this->userModel->updateUserProfile($userId, $imagePath);
-                        echo "Profile picture updated successfully!";
-                    } else {
-                        echo "Failed to upload image or user ID missing!";
-                    }
-                } else {
-                    echo "No file uploaded or upload error!";
-                }
-            } else {
-                echo "Invalid token or user not logged in!";
-            }
-        }
-    }
 
 
 
-    private function getUserIdFromToken() {
+
+    public function getUserIdFromToken() {
         $headers = getallheaders();
         $authHeader = $headers['Authorization'] ?? '';
     
@@ -63,14 +41,17 @@ class UserController {
             $jwt = explode(' ', $authHeader)[1];
     
             // Verify JWT
+            if (empty($jwt)) {
+                throw new Exception("JWT token is missing");
+            }
+    
             $userData = $this->verifyJWT($jwt);
     
-            if ($userData) {
-                // Access granted, process request
-                return $userData->user_id; // Assuming 'user_id' is the claim in your JWT
+            if ($userData && isset($userData->user_id)) {
+                return $userData->user_id; 
             } else {
-                // Invalid token
-                echo json_encode(['status' => 'error', 'message' => 'Invalid token']);
+              
+                echo json_encode(['status' => 'error', 'message' => 'user_id not found in token']);
                 return null;
             }
         } else {
@@ -79,10 +60,13 @@ class UserController {
             return null;
         }
     }
+    
+    
 
 
-    private function storeImage($file) {
+    public function storeImage($file) {
         $targetDir = "uploads/";
+        
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);  // Create directory if it doesn't exist
         }

@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $secret_key = "1234Staffed";
             $issuedAt = time();
-            $expirationTime = $issuedAt + 3600; // 1-hour expiration
+            $expirationTime = $issuedAt + 3600;
             $payload = array(
                 "iss" => "your_domain.com",
                 "iat" => $issuedAt,
