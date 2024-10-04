@@ -3,8 +3,7 @@
 <?php
 
 require_once (__DIR__ . "../../../composer/vendor/autoload.php");
-use \Firebase\JWT\JWT;
-
+use Firebase\JWT\JWT;
 
 include_once(__DIR__ . '/../../Config/Database.php');
 class SignupController  {
@@ -35,7 +34,7 @@ class SignupController  {
         $this->email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8');
         $this->number = trim($number);
         $this->country = trim($country);
-        $this->password = password_hash($password, PASSWORD_BCRYPT); // Hash happens here
+        $this->password = password_hash($password, PASSWORD_ARGON2ID); // Hash happens here
         $this->ipAddress = trim($ipAddress);
         $this->userType = trim($userType);
     }
@@ -71,19 +70,21 @@ class SignupController  {
 
     public function setUser($username, $email, $number, $country, $password, $ipAddress,$userType) {
         $userToken = $this->generateToken();
-        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address,user_token,user_type) VALUES (:username, :email, :password, :country, :number,:ip_address, :user_token,,user_type);";
+        $query = "INSERT INTO staffed_users (username, user_email, user_password, user_country, user_phoneNumber,ip_address,user_token,user_type) VALUES (:username, :email, :password, :country, :number,:ip_address, :user_token,:user_type);";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':country', $country);
-        $stmt->bindParam(':number', var: $number);
+        $stmt->bindParam(':number', $number);
         $stmt->bindParam(':password', $password);
         $stmt->bindParam(':ip_address', $ipAddress);
         $stmt->bindParam(':user_token', $userToken);
         $stmt->bindParam(':user_type', $userType);
-
+    
         if ($stmt->execute()) {
-            return $this->generateJWT($this->connection->lastInsertId(), $username);
+            $userId = $this->connection->lastInsertId();
+            $jwtToken = $this->generateJWT($userId, $username);
+            return $jwtToken;
         }
         else{
             return false;
@@ -128,7 +129,11 @@ class SignupAuth {
         else {
             $this->sendResponse(['status' => 'error', 'message' => 'Signup failed. Please try again.']);
         }
+
+       
+
     }
+    
     
     private function sendResponse(array $response): void {
         header('Content-Type: application/json');
@@ -155,12 +160,14 @@ class UserSignup {
     public function validateSignupData(): ?array {
         $errors = [];
 
-        $requiredFields = ['username', 'password', 'number', 'email', 'country','user_type'];
-        foreach ($requiredFields as $field) {
-            if (empty($this->data[$field])) {
-                $errors[] = ucfirst($field) . ' is required.';
-            }
-        }
+      $requiredFields = ['username', 'email', 'number', 'country', 'password', 'ip_address', 'user_type'];
+foreach ($requiredFields as $field) {
+    if (empty($input[$field])) {
+        header("HTTP/1.1 400 Bad Request");
+        echo json_encode(['status' => 'error', 'message' => $field . ' is required.']);
+        exit;
+    }
+}
 
         if (!empty($errors)) {
             $this->sendResponse(['status' => 'error', 'message' => implode(', ', $errors)]);
