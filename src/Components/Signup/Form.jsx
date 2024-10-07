@@ -29,7 +29,7 @@ const LandingPage = () => {
 
     try {
       // const response = await axios({
-      //   url: "http://localhost/my-STAFFed/PHP/Signup_Login/api/Signup.php",
+      //   url: "http://localhost/STAFFed/PHP/api/employee.php",
       //   method: "POST",
       //   headers: {
       //     "Content-Type": "application/x-www-form-urlencoded",
@@ -37,8 +37,8 @@ const LandingPage = () => {
       //   formData, // Convert formData to string
       // });
 
-      const data = await axios.post(
-        "http://localhost/my-STAFFed/PHP/Signup_Login/api/Signup.php",
+      const response = await axios.post(
+        "http://localhost/STAFFed/PHP/api/employee.php",
         formData,
         //     "Content-Type": "application/x-www-form-urlencoded",
         {

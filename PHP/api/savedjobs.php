@@ -1,0 +1,12 @@
+user_id
+username
+user_email
+user_country
+user_phoneNumber
+user_type
+user_token
+user_profile
+user_password
+ip_address
+
+

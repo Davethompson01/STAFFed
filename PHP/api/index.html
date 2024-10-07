@@ -7,16 +7,17 @@
   </head>
   <body>
     <form
-      action="../api/profile.php"
+      action="../api/employee.php"
       method="POST"
       enctype="multipart/form-data"
       id="profilePicture"
     >
       <label for="username">Username:</label>
       <input type="text" name="username" id="username" required />
-
-      <label for="profilePicture">Profile Picture:</label>
-      <input type="file" name="user_profile" id="profilePicture" required />
+      <input type="text" name="email" id="username" required />
+      <input type="text" name="number" id="username" required /> 
+      <input type="text" name="country" id="username" required />
+      <input type="text" name="password" id="username" required /> 
 
       <button type="submit">Submit</button>
     </form>

@@ -1,0 +1,11 @@
+{
+    "name": "david/php",
+    "autoload": {
+        "psr-4": {
+            "David\\Php\\": "src/"
+        }
+    },
+    "require": {
+        "firebase/php-jwt": "^6.10"
+    }
+}

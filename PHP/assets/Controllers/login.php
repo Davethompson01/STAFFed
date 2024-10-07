@@ -1,5 +1,5 @@
 <?php
-include_once (__DIR__ . '/../Models/Login.php');
+include_once (__DIR__ . '/../Models/Model.php');
 use Firebase\JWT\JWT;
 
 // use \Firebase\JWT\JWT;
@@ -15,24 +15,22 @@ class LoginAuth {
         $this->loginModel = new LoginModel();
     }
 
-    public function handleLogin() {
-        $cleanedData = $this->userLogin->cleanData();
-        
-        if ($cleanedData) {
-            $this->loginModel->setData($cleanedData);
-            $user = $this->loginModel->checkUser();
-            if (is_array($user)) {
-                // Generate a JWT token if login is successful
-                $jwtToken = $this->generateJWT($user['user_id'], $user['username']);
-                $this->sendResponse(['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user]);
-            } elseif ($user === "Wrong") {
-                $this->sendResponse(['status' => 'error', 'message' => 'Invalid password.']);
-            } else {
-                $this->sendResponse(['status' => 'error', 'message' => 'Invalid username or password.']);
-            }
+    public function handleLogin($email, $password): array {
+        $cleanedData = ['email' => $email, 'password' => $password]; // Directly pass the data
+
+        $this->loginModel->setData($cleanedData);
+        $user = $this->loginModel->checkUser();
+
+        if (is_array($user)) {
+            // Generate a JWT token if login is successful
+            $jwtToken = $this->generateJWT($user['user_id'], $user['username']);
+            return ['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user];
+        } elseif ($user === "Wrong") {
+            return ['status' => 'error', 'message' => 'Invalid password.'];
+        } else {
+            return ['status' => 'error', 'message' => 'Invalid username or password.'];
         }
     }
-
     private function sendResponse($response) {
         header('Content-Type: application/json');
         echo json_encode($response);
@@ -43,20 +41,24 @@ class LoginAuth {
         $issuedAt = time();
         $expirationTime = $issuedAt + 3600; // JWT valid for 1 hour
         $payload = array(
-            "iss" => "your_domain.com",    // Issuer
-            "aud" => "your_domain.com",    // Audience
-            "iat" => $issuedAt,            // Issued at
-            "exp" => $expirationTime,      // Expiration time
+            "iss" => "your_domain.com",
+            "iat" => $issuedAt,
+            "exp" => $expirationTime,
             "data" => array(
                 "id" => $userId,
                 "username" => $username
             )
         );
+        
 
         // Encode the array to a JWT string
         $jwt = JWT::encode($payload, $this->secret_key, 'HS256');
 
         return $jwt;
+    }
+
+    public function getSecretKey(): string {
+        return $this->secret_key;
     }
 }
 
@@ -79,8 +81,8 @@ class UserLogin {
             $this->sendResponse(['status' => 'error', 'message' => 'Invalid input. Provide your details.']);
             return false;
         }
-        if (empty($this->data['username'])) {
-            $this->sendResponse(['status' => 'error', 'message' => 'Invalid input. Username is required.']);
+        if (empty($this->data['email'])) {
+            $this->sendResponse(['status' => 'error', 'message' => 'Invalid input.  is required.']);
             return false;
         }
         if (empty($this->data['password'])) {
@@ -107,6 +109,11 @@ class UserLogin {
                 $this->sendResponse(['status' => 'error', 'message' => 'Email is required.']);
                 return null;
             }
+
+            if (empty($email) || empty($password)) {
+                $this->sendResponse(['status' => 'error', 'message' => 'Email and password are required']);
+                return null;
+            }
     
             if (empty($password)) {
                 $this->sendResponse(['status' => 'error', 'message' => 'Password is required.']);
@@ -123,4 +130,8 @@ class UserLogin {
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+
+   
 }
+
+

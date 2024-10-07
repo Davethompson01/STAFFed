@@ -2,7 +2,7 @@
 
 <?php
 
-require_once (__DIR__ . "../../../composer/vendor/autoload.php");
+require_once (__DIR__ .  "/../../vendor/autoload.php");
 use Firebase\JWT\JWT;
 
 include_once(__DIR__ . '/../../Config/Database.php');
@@ -62,9 +62,12 @@ class SignupController  {
                 "username" => $username
             )
         );
-        $jwt = JWT::encode($payload, $this->secret_key, '1234Staffed');
+        $jwt = JWT::encode($payload, $this->secret_key, 'HS256'); // Use HS256 instead of '1234Staffed'
+    return $jwt;
 
-        return $jwt;
+        if (!class_exists('Firebase\JWT\JWT')) {
+            throw new Exception('Firebase\JWT\JWT class not found');
+        }
     }
 
 
@@ -83,12 +86,21 @@ class SignupController  {
     
         if ($stmt->execute()) {
             $userId = $this->connection->lastInsertId();
-            $jwtToken = $this->generateJWT($userId, $username);
-            return $jwtToken;
-        }
-        else{
+            $jwt = $this->generateJWT($userId, $username);
+            $userData = [
+                'id' => $userId,
+                'username' => $username,
+                'email' => $email,
+                'number' => $number,
+                'country' => $country,
+                'userType' => $userType,
+                'token' => $jwt
+            ];
+            return $userData;
+        } else {
             return false;
         }
+    
     }
 }
 include_once(__DIR__ . '/../Controllers/Signup.php');
@@ -107,11 +119,8 @@ class SignupAuth {
         $number = $postData['number'] ?? '';
         $country = $postData['country'] ?? '';
         $password = $postData['password'] ?? '';
-        $userType = $postData['user_type'] ?? '';
         
-        $this->SignupController->setData($username,   $email,
-        $number,
-       $country, $password,$ipAddress,$userType);
+        $this->SignupController->setData($username, $email, $number, $country, $password, $ipAddress, 'employee');    
 
        if ($this->SignupController->checkEmail()) {
         $this->sendResponse(['status' => 'error', 'message' => 'Email already taken.']);
@@ -120,9 +129,9 @@ class SignupAuth {
 
         $userId = $this->SignupController->setUser($username,   $email,
         $number,
-       $country, $password,$ipAddress,$userType);
+       $country, $password,$ipAddress,'employee');
  if ($userId) {
-    $this->sendResponse(['status' => 'success', 'message' => 'Signup successful', 'token' => $userId['userToken']]);
+    $this->sendResponse(['status' => 'success', 'message' => 'Signup successful', 'userData' => $userId]);
         }
         
         
@@ -152,6 +161,8 @@ class UserSignup {
         $this->getData();
     }
 
+    
+
     private function getData() {
         $input = file_get_contents('php://input');
         $this->data = json_decode($input, true) ?? [];
@@ -160,7 +171,7 @@ class UserSignup {
     public function validateSignupData(): ?array {
         $errors = [];
 
-      $requiredFields = ['username', 'email', 'number', 'country', 'password', 'ip_address', 'user_type'];
+        $requiredFields = ['username', 'email', 'number', 'country', 'password', 'ip_address']; // No 'user_type' here
 foreach ($requiredFields as $field) {
     if (empty($input[$field])) {
         header("HTTP/1.1 400 Bad Request");
