@@ -11,15 +11,15 @@ header('Content-Type: application/json');
     require_once(__DIR__ . '/../assets/Controllers/signup.php'); 
     function getIpAddress() {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            echo $_SERVER['HTTP_CLIENT_IP'];
+            
             return $_SERVER['HTTP_CLIENT_IP'];
 
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            echo trim($ips[0]);
+          
             return trim($ips[0]); 
         } else {
-            echo   $_SERVER['REMOTE_ADDR'];
+         
             return $_SERVER['REMOTE_ADDR'];
         }
     }

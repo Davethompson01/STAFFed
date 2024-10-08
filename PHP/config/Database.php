@@ -1,39 +1,29 @@
 <?php
 
-require_once (__DIR__ . "/../vendor/autoload.php");
-use \Firebase\JWT\JWT;
-class Database {
+namespace App\Config;
 
-    private $DB_HOST = "localhost";
-    private $DB_NAME = "staffed";
-    private $DB_USER = "staffed";
-    private $DB_PASS = 'staffed';
+use PDO;
+use PDOException;
 
+class Database
+{
+    private $host = 'localhost';
+    private $db_name = 'staffed';  // Replace with actual database name
+    private $username = 'staffed';  // Replace with database username
+    private $password = 'staffed';  // Replace with database password
     private $connection;
 
-    // function __construct() {
-    //     // Constructor is empty. Consider adding initialization code if needed.
-    // }
-
-    public function getConnection() {
+    public function getConnection()
+    {
         $this->connection = null;
 
         try {
-            $this->connection = new PDO("mysql:host=" . $this->DB_HOST . ";dbname=" . $this->DB_NAME, $this->DB_USER, $this->DB_PASS);
+            $this->connection = new PDO("mysql:host={$this->host};dbname={$this->db_name}", $this->username, $this->password);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $exception) {
-            echo "Connection error: " . $exception->getMessage();
+        } catch (PDOException $e) {
+            echo "Connection error: " . $e->getMessage();
         }
-        return $this->connection; // Fix: Return the connection object
+
+        return $this->connection;
     }
-
-}
-
-$db = new Database();
-$connection = $db->getConnection();
-
-if ($connection) {
-    echo "Connection successful!";
-} else {
-    echo "Connection failed!";
 }

@@ -3,7 +3,7 @@
         'name' => 'david/php',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '8920367cc6bacad0922d34606de2edab1926b3ce',
+        'reference' => 'e87dee65632b8a09b18129e4d8b61693790b2886',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'david/php' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '8920367cc6bacad0922d34606de2edab1926b3ce',
+            'reference' => 'e87dee65632b8a09b18129e4d8b61693790b2886',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
