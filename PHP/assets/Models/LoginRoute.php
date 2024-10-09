@@ -11,8 +11,7 @@ use App\Controllers\LoginView;
 use App\Config\Database;
 
 
-class LoginRoute
-{
+class LoginRoute{
     private $loginController;
     private $database;
     private $loginView;

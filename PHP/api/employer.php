@@ -5,7 +5,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
 require_once(__DIR__ . '/../config/Database.php');
-require_once(__DIR__ . '/../assets/Controllers/eeSignupController.php');
+require_once(__DIR__ . '/../assets/Controllers/SignupController.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new App\Controllers\SignupController();
