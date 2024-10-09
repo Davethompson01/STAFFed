@@ -8,8 +8,7 @@ include_once(__DIR__ . '/../../Config/Database.php');
 
 use PDO;
 
-class User
-{
+class User{
     private $db;
 
     public function __construct( $db)
