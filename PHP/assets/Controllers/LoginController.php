@@ -12,26 +12,33 @@ class LoginController {
     {
         $this->userModel = $userModel;
     }
-    public function handleLogin($email, $password)
-    {
+   public function handleLogin($email, $password)
+{
+    session_start();
+    $user = $this->userModel->checkUser($email, $password);
 
-        session_start();
-        $user = $this->userModel->checkUser($email, $password);
+    if (is_array($user)) {
+        $jwtToken = $this->generateJWT(
+            $user['user_id'], 
+            $user['username'], 
+            $user['user_type'], 
+            $user['employer_id'] ?? null // Include employer_id if available
+        );
+        
 
-        if (is_array($user)) {
-            $jwtToken = $this->generateJWT($user['user_id'], $user['username']);
 
-            $_SESSION['user_id'] = $user['user_id']; // Store user ID
-            $_SESSION['user_type'] = $user['user_type'];
-            return ['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user];
-        } elseif ($user === "Wrong") {
-            return ['status' => 'error', 'message' => 'Invalid password.'];
-        } else {
-            return ['status' => 'error', 'message' => 'Invalid username or password.'];
-        }
+        $_SESSION['user_id'] = $user['user_id']; // Store user ID
+        $_SESSION['user_type'] = $user['user_type'];
+        return ['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user];
+    } elseif ($user === "Wrong") {
+        return ['status' => 'error', 'message' => 'Invalid password.'];
+    } else {
+        return ['status' => 'error', 'message' => 'Invalid username or password.'];
     }
+}
 
-    private function generateJWT($userId, $username)
+
+    private function generateJWT($userId, $username, $userType, $employerId = null)
     {
         $issuedAt = time();
         $expirationTime = $issuedAt + 3600; // JWT valid for 1 hour
@@ -41,11 +48,14 @@ class LoginController {
             "exp" => $expirationTime,
             "data" => [
                 "id" => $userId,
-                "username" => $username
+                "username" => $username,
+                "user_type" => $userType,
+                "employer_id" => $employerId 
             ]
         ];
-
-        $jwt = JWT::encode($payload, "your_secret_key", 'HS256');
+    
+        $jwt = JWT::encode($payload, "1234Staffed", 'HS256');
         return $jwt;
     }
+    
 }

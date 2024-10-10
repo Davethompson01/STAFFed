@@ -4,9 +4,10 @@ namespace App\Models;
 
 require_once(__DIR__ . "/../../config/Database.php");
 use App\Config\Database;
-use App\Models\Exception;
-
 use PDO;
+use PDOException;
+
+
 
 class User {
 

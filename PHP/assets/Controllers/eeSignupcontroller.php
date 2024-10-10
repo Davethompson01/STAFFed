@@ -20,8 +20,6 @@ class SignupController {
     }
 
     public function handleSignup() {
-
-        
         header('Content-Type: application/json');
         $signupRequest = new SignupRequest();
         function getIpAddress() {
@@ -44,7 +42,7 @@ class SignupController {
         
 
         if (!$data) {
-            return; // Errors are already handled in the request class
+            return; 
         }
 
         if ($this->userModel->checkEmail($data['email'])) {

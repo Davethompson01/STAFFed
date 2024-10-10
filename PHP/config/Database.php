@@ -8,9 +8,9 @@ use PDOException;
 class Database
 {
     private $host = 'localhost';
-    private $db_name = 'staffed';  // Replace with actual database name
-    private $username = 'staffed';  // Replace with database username
-    private $password = 'staffed';  // Replace with database password
+    private $db_name = 'staffed';  
+    private $username = 'staffed';  
+    private $password = 'staffed';
     private $connection;
 
     public function getConnection()
