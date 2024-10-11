@@ -12,50 +12,44 @@ class LoginController {
     {
         $this->userModel = $userModel;
     }
-   public function handleLogin($email, $password)
+    public function handleLogin($email, $password) {
+        $user = $this->userModel->checkUser($email, $password);
+    
+        if (is_array($user)) {
+            error_log(print_r($user, true));
+            $userType = $user['user_type']; 
+            $employerId = $userType === 'employer' ? $user['employer_id'] : null;
+            $employeeId = $userType === 'employee' ? (isset($user['employee_id']) ? $user['employee_id'] : null) : null;
+    
+            $jwtToken = $this->generateJWT($user['user_id'], $user['username'], $userType, $employerId, $employeeId);
+            return ['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user];
+        } elseif ($user === "Wrong") {
+            return ['status' => 'error', 'message' => 'Invalid password.'];
+        } else {
+            return ['status' => 'error', 'message' => 'Invalid username or password.'];
+        }
+    }
+    
+    
+
+
+   private function generateJWT($userId, $username, $userType, $employerId = null, $employeeId = null)
 {
-    session_start();
-    $user = $this->userModel->checkUser($email, $password);
+    $issuedAt = time();
+    $expirationTime = $issuedAt + 3600; 
+    $payload = [
+        "iss" => "your_domain.com",
+        "iat" => $issuedAt,
+        "exp" => $expirationTime,
+        "data" => [
+            "id" => $userId,
+            "username" => $username,
+            "user_type" => $userType,
+            "employer_id" => $employerId,
+            "employee_id" => $employeeId
+        ]
+    ];
 
-    if (is_array($user)) {
-        $jwtToken = $this->generateJWT(
-            $user['user_id'], 
-            $user['username'], 
-            $user['user_type'], 
-            $user['employer_id'] ?? null // Include employer_id if available
-        );
-        
-
-
-        $_SESSION['user_id'] = $user['user_id']; // Store user ID
-        $_SESSION['user_type'] = $user['user_type'];
-        return ['status' => 'success', 'message' => 'Login successful.', 'token' => $jwtToken, 'user_details' => $user];
-    } elseif ($user === "Wrong") {
-        return ['status' => 'error', 'message' => 'Invalid password.'];
-    } else {
-        return ['status' => 'error', 'message' => 'Invalid username or password.'];
-    }
+    return JWT::encode($payload, "1234Staffed", 'HS256');
 }
-
-
-    private function generateJWT($userId, $username, $userType, $employerId = null)
-    {
-        $issuedAt = time();
-        $expirationTime = $issuedAt + 3600; // JWT valid for 1 hour
-        $payload = [
-            "iss" => "your_domain.com",
-            "iat" => $issuedAt,
-            "exp" => $expirationTime,
-            "data" => [
-                "id" => $userId,
-                "username" => $username,
-                "user_type" => $userType,
-                "employer_id" => $employerId 
-            ]
-        ];
-    
-        $jwt = JWT::encode($payload, "1234Staffed", 'HS256');
-        return $jwt;
-    }
-    
 }

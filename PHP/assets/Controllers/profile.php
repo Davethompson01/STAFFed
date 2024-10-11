@@ -18,7 +18,7 @@ class userprofile {
     
     public function verifyJWT($jwt) {
         try {
-            // Ensure $jwt is a string
+         
             if (!is_string($jwt)) {
                 throw new Exception("JWT token must be a string");
             }
@@ -40,7 +40,7 @@ class userprofile {
         if (strpos($authHeader, 'Bearer ') === 0) {
             $jwt = explode(' ', $authHeader)[1];
     
-            // Verify JWT
+           
             if (empty($jwt)) {
                 throw new Exception("JWT token is missing");
             }
@@ -68,7 +68,7 @@ class userprofile {
         $targetDir = "uploads/";
         
         if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0777, true);  // Create directory if it doesn't exist
+            mkdir($targetDir, 0777, true);  
         }
         $targetFile = $targetDir . time() . '_' . basename($file["name"]);
 

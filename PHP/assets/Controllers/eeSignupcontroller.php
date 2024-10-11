@@ -22,20 +22,39 @@ class SignupController {
     public function handleSignup() {
         header('Content-Type: application/json');
         $signupRequest = new SignupRequest();
-        function getIpAddress() {
-            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        // function getIpAddress() {
+        //     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
                 
-                return $_SERVER['HTTP_CLIENT_IP'];
+        //         return $_SERVER['HTTP_CLIENT_IP'];
     
-            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        //     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        //         $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
               
-                return trim($ips[0]); 
-            } else {
+        //         return trim($ips[0]); 
+        //     } else {
              
-                return $_SERVER['REMOTE_ADDR'];
-            }
-        }
+        //         return $_SERVER['REMOTE_ADDR'];
+        //     }
+        // }
+     function getIpAddress() {
+            $ipaddress = '';
+            if (getenv('HTTP_CLIENT_IP'))
+                $ipaddress = getenv('HTTP_CLIENT_IP');
+            else if(getenv('HTTP_X_FORWARDED_FOR'))
+                $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+            else if(getenv('HTTP_X_FORWARDED'))
+                $ipaddress = getenv('HTTP_X_FORWARDED');
+            else if(getenv('HTTP_FORWARDED_FOR'))
+                $ipaddress = getenv('HTTP_FORWARDED_FOR');
+            else if(getenv('HTTP_FORWARDED'))
+               $ipaddress = getenv('HTTP_FORWARDED');
+            else if(getenv('REMOTE_ADDR'))
+                $ipaddress = getenv('REMOTE_ADDR');
+            else
+                $ipaddress = 'UNKNOWN';
+        
+            $ipaddress = $_SERVER['SERVER_ADDR'] ;
+        }        
         
         $data = $signupRequest->validateSignupData();
         $data['ip_address'] = getIpAddress();
@@ -51,11 +70,9 @@ class SignupController {
         }
 
         $userId = $this->userModel->createUser($data );
-        // $token = $this->tokenGenerator->generateToken($userId, $data['username'], 'employer');
+        // $token = $this->tokenGenerator->($userId, $data['username'], 'employer');
         if ($userId) {
             $token = $this->tokenGenerator->generateToken($userId, $data['username'], 'employer');
-    
-            // Now, update the user record with the token
             $this->userModel->updateToken($userId, $token);
     
             $this->sendResponse([
@@ -76,7 +93,7 @@ class SignupController {
 
 
     private function updateUserToken($userId, $token) {
-        // Assuming you add a method in the User model to update the token
+       
         $this->userModel->updateToken($userId, $token);
     }
 

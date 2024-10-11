@@ -16,7 +16,7 @@ class Job {
     }
 
     public function createJob($price, $job_category, $company_name, $job_title, $work_mode, $job_location, $resume_url, $job_description, $requirement, $employer_id, $employee_id) {
-        // Validate job data
+        
         $jobData = [
             'price' => $price,
             'job_category' => $job_category,
@@ -36,14 +36,13 @@ class Job {
             }
         }
 
-        // Prepare SQL query
+     
         $query = "INSERT INTO " . $this->table . " 
         (price, job_category, company_name, job_title, work_mode, job_location, resume_url, job_description, requirement, employer_id, employee_id)
         VALUES (:price, :job_category, :company_name, :job_title, :work_mode, :job_location, :resume_url, :job_description, :requirement, :employer_id, :employee_id)";
 
         $stmt = $this->db->prepare($query);
 
-        // Bind parameters
         $stmt->bindParam(':price', $price);
         $stmt->bindParam(':job_category', $job_category);
         $stmt->bindParam(':company_name', $company_name);
@@ -57,7 +56,7 @@ class Job {
         $stmt->bindParam(':employee_id', $employee_id);
 
         if ($stmt->execute()) {
-            // Job creation successful
+            
             return ['status' => 'success', 'message' => 'Job created successfully'];
         }
 
