@@ -46,7 +46,7 @@ class JobRoute {
                 echo json_encode(['status' => 'error', 'message' => 'Invalid token: ' . $e->getMessage()]);
                 exit();
             }
-        }
+        } 
         return null;
     }
     
