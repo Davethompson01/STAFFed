@@ -9,7 +9,7 @@ class TokenGenerator {
     // Adjust the parameters to handle both employeeId and employerId correctly
     public function generateToken($userId, $username, $userType, $employerId = null, $employeeId = null) {
         $issuedAt = time(); 
-        $expirationTime = $issuedAt + 3600; // jwt valid for 1 hour
+        $expirationTime = $issuedAt + 3600;
         
         $payload = [
             "iss" => "your_domain.com",

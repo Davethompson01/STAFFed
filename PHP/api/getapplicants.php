@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Check if employer_id exists in the token (assuming you store employer_id in JWT)
             if (isset($decoded->data->employer_id)) {
-                // Check if input data is present
+                
                 $inputData = json_decode(file_get_contents("php://input"), true);
                 
                 if (json_last_error() !== JSON_ERROR_NONE) {
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 
-                // Debugging: Check if inputData is received
+                
                 if (empty($inputData)) {
                     echo json_encode(['status' => 'error', 'message' => 'No input data received']);
                     exit;
